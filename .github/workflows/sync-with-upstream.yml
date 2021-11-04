@@ -1,0 +1,31 @@
+name: Sync with upstream
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  sync-root:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout ATLAS fork of ROOT
+      uses: actions/checkout@v2
+      with:
+        repository: 'atlascollaboration/root'
+
+    - name: Setup Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Set upstream
+      run: |
+        git remote add upstream https://github.com/root-project/root.git
+        git remote --verbose show
+
+    - name: Sync with upstream
+      run: |
+        git fetch --all --prune
+        git pull upstream master
+        git push origin master --tags
